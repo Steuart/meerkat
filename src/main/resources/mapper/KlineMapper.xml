@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.jooylife.meerkat.repository.mapper.KlineMapper">
 
-    <resultMap id="BaseResultMap" type="cc.jooylife.meerkat.repository.Kline">
+    <resultMap id="BaseResultMap" type="cc.jooylife.meerkat.repository.entity.Kline">
             <id property="id" column="id" jdbcType="OTHER"/>
             <result property="openTime" column="open_time" jdbcType="TIMESTAMP"/>
             <result property="open" column="open" jdbcType="DECIMAL"/>
@@ -28,4 +28,27 @@
         number_of_trades,taker_buy_base_asset_volume,taker_buy_quote_asset_volume,
         interval,create_date
     </sql>
+
+    <update id="createTable" parameterType="string">
+        CREATE TABLE IF NOT EXISTS `${tableName}` (
+             `id` int unsigned NOT NULL AUTO_INCREMENT,
+             `open_time` datetime NOT NULL,
+             `open` decimal(20,8) NOT NULL,
+             `high` decimal(20,8) NOT NULL,
+             `low` decimal(20,8) NOT NULL,
+             `close` decimal(20,8) NOT NULL,
+             `volume` decimal(20,8) NOT NULL,
+             `close_time` datetime NOT NULL,
+             `qu_jote_asset_volume` decimal(20,8) NOT NULL,
+             `number_of_trades` int NOT NULL,
+             `taker_buy_base_asset_volume` decimal(20,8) NOT NULL,
+             `taker_buy_quote_asset_volume` decimal(20,8) NOT NULL,
+             `interval` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+             `update_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+             `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+             PRIMARY KEY (`id`),
+             KEY `idx_close_time` (`close_time`) USING BTREE,
+             KEY `idx_open_time` (`open_time`) USING BTREE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    </update>
 </mapper>

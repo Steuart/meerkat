@@ -28,4 +28,5 @@
         buyer_maker,best_match,type,
         create_date,update_date
     </sql>
+
 </mapper>

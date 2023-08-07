@@ -1,10 +1,8 @@
 package cc.jooylife.meerkat.repository.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -14,14 +12,11 @@ import java.util.Date;
  * 
  * @TableName kline
  */
+@EqualsAndHashCode(callSuper = true)
 @TableName(value ="kline")
 @Data
 public class Kline extends BaseEntity implements Serializable {
-    /**
-     * 
-     */
-    @TableId(type = IdType.AUTO)
-    private Object id;
+
 
     /**
      * 
@@ -82,12 +77,4 @@ public class Kline extends BaseEntity implements Serializable {
      * 
      */
     private String interval;
-
-    /**
-     * 
-     */
-    private Date createDate;
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 }

@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.jooylife.meerkat.repository.mapper.SymbolMapper">
 
-    <resultMap id="BaseResultMap" type="cc.jooylife.meerkat.repository.Symbol">
+    <resultMap id="BaseResultMap" type="cc.jooylife.meerkat.repository.entity.Symbol">
             <id property="id" column="id" jdbcType="OTHER"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
             <result property="quoteAsset" column="quote_asset" jdbcType="VARCHAR"/>

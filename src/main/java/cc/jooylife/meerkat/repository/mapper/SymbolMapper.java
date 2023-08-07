@@ -1,6 +1,7 @@
 package cc.jooylife.meerkat.repository.mapper;
 
-import cc.jooylife.meerkat.repository.Symbol;
+
+import cc.jooylife.meerkat.repository.entity.Symbol;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -10,6 +11,4 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity cc.jooylife.meerkat.repository.Symbol
 */
 public interface SymbolMapper extends BaseMapper<Symbol> {
-
-
 }

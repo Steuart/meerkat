@@ -1,7 +1,7 @@
 package cc.jooylife.meerkat.repository.mapper;
 
-import cc.jooylife.meerkat.repository.Kline;
-import com.baomidou.mybatisplus.mapper.BaseMapper;
+import cc.jooylife.meerkat.repository.entity.Kline;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
 * @author haiming
@@ -11,5 +11,7 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
 */
 public interface KlineMapper extends BaseMapper<Kline> {
 
+
+    void createTable(String tableName);
 
 }
