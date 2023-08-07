@@ -1,4 +1,4 @@
-package cc.jooylife.meerkat.bean;
+package cc.jooylife.meerkat.common;
 
 import lombok.Data;
 

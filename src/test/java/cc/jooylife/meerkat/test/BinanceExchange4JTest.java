@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 @Slf4j
-class Binance4JTest {
+class BinanceExchange4JTest {
 
     private final String apiKey = EnvUtil.getValue("meerkat.binance.api-key");
 

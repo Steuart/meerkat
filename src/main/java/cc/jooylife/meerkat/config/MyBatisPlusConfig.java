@@ -1,6 +1,6 @@
 package cc.jooylife.meerkat.config;
 
-import cc.jooylife.meerkat.bean.Constants;
+import cc.jooylife.meerkat.common.Constants;
 import cc.jooylife.meerkat.util.KlineUtil;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.DynamicTableNameInnerInterceptor;

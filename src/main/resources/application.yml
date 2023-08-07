@@ -33,7 +33,10 @@ spring:
       enabled: true
     livereload:
       enabled: true
-
+exchange:
+  binance:
+    api-key: ${meerkat.binance.api-key}
+    api-secret: ${meerkat.binance.api-secret}
 # mybatis配置
 mybatis:
   mapper-locations: classpath:mapper/*.xml
