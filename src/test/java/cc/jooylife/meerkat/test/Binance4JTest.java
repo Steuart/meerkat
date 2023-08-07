@@ -51,7 +51,7 @@ class Binance4JTest {
     public void klinesTest() {
         MarketClient client = new MarketClient(apiKey, apiSecret);
         try {
-            KlinesParams klinesParams = new KlinesParams("BTCUSDT", "1m");
+            KlinesParams klinesParams = new KlinesParams("FILUSDT", "5m");
             List<Candle> klines = client.getKlines(klinesParams).sync();
             klines.forEach(kline -> {
                 log.info("kline:{}", JsonUtil.toJson(kline));
