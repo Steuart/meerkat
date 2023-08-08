@@ -1,22 +1,9 @@
-package cc.jooylife.meerkat.repository.entity;
+package cc.jooylife.meerkat.common.dto;
 
-
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
-
-/**
- * 
- * symbol
- */
-@EqualsAndHashCode(callSuper = true)
-@TableName(value ="symbol")
 @Data
-public class Symbol extends BaseEntity implements Serializable {
-
-
+public class SymbolDto {
     /**
      * 名字
      */
@@ -71,5 +58,4 @@ public class Symbol extends BaseEntity implements Serializable {
      * 状态，TRADING-交易中
      */
     private String status;
-
 }
