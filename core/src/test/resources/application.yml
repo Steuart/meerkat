@@ -1,0 +1,43 @@
+server:
+  port: ${meerkat.server.port}
+
+spring:
+  application:
+    name: ilex-server
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: ${meerkat.datasource.url}
+    username: ${meerkat.datasource.username}
+    password: ${meerkat.datasource.password}
+    hikari:
+      pool-name: DatebookHikariCP
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+  jackson:
+    serialization:
+      write-dates-as-timestamps: true
+    default-property-inclusion: non_null
+  devtools:
+    restart:
+      additional-paths: src/main
+      enabled: true
+    livereload:
+      enabled: true
+exchange:
+  binance:
+    api-key: ${meerkat.binance.api-key}
+    api-secret: ${meerkat.binance.api-secret}
+# mybatis配置
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: cc.jooylife.meerkat.core.repository.entity

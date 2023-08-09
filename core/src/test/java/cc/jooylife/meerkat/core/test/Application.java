@@ -1,4 +1,4 @@
-package cc.jooylife.meerkat.collector;
+package cc.jooylife.meerkat.core.test;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
