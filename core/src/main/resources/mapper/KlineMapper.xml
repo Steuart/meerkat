@@ -4,31 +4,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.jooylife.meerkat.core.repository.mapper.KlineMapper">
 
-    <resultMap id="BaseResultMap" type="cc.jooylife.meerkat.core.repository.entity.Kline">
-            <id property="id" column="id" jdbcType="OTHER"/>
-            <result property="openTime" column="open_time" jdbcType="TIMESTAMP"/>
-            <result property="open" column="open" jdbcType="DECIMAL"/>
-            <result property="high" column="high" jdbcType="DECIMAL"/>
-            <result property="low" column="low" jdbcType="DECIMAL"/>
-            <result property="close" column="close" jdbcType="DECIMAL"/>
-            <result property="volume" column="volume" jdbcType="DECIMAL"/>
-            <result property="closeTime" column="close_time" jdbcType="TIMESTAMP"/>
-            <result property="quJoteAssetVolume" column="qu_jote_asset_volume" jdbcType="DECIMAL"/>
-            <result property="numberOfTrades" column="number_of_trades" jdbcType="INTEGER"/>
-            <result property="takerBuyBaseAssetVolume" column="taker_buy_base_asset_volume" jdbcType="DECIMAL"/>
-            <result property="takerBuyQuoteAssetVolume" column="taker_buy_quote_asset_volume" jdbcType="DECIMAL"/>
-            <result property="interval" column="interval" jdbcType="VARCHAR"/>
-            <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
-    </resultMap>
-
-    <sql id="Base_Column_List">
-        id,open_time,open,
-        high,low,close,
-        volume,close_time,qu_jote_asset_volume,
-        number_of_trades,taker_buy_base_asset_volume,taker_buy_quote_asset_volume,
-        interval,create_date
-    </sql>
-
     <update id="createTable" parameterType="string">
         CREATE TABLE IF NOT EXISTS `${tableName}` (
              `id` int unsigned NOT NULL AUTO_INCREMENT,
@@ -43,7 +18,7 @@
              `number_of_trades` int NOT NULL,
              `taker_buy_base_asset_volume` decimal(20,8) NOT NULL,
              `taker_buy_quote_asset_volume` decimal(20,8) NOT NULL,
-             `interval` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+             `type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
              `update_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
              `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
              PRIMARY KEY (`id`),
@@ -51,4 +26,8 @@
              KEY `idx_open_time` (`open_time`) USING BTREE
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
     </update>
+
+    <delete id="dropTable">
+        DROP TABLE IF EXISTS `${tableName}`;
+    </delete>
 </mapper>

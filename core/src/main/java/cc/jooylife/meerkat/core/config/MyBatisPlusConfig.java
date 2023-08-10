@@ -1,7 +1,7 @@
-package cc.jooylife.meerkat.collector.config;
+package cc.jooylife.meerkat.core.config;
 
 import cc.jooylife.meerkat.core.common.Constants;
-import cc.jooylife.meerkat.core.util.KlineUtil;
+import cc.jooylife.meerkat.core.repository.dao.KlineDao;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.DynamicTableNameInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
@@ -17,7 +17,7 @@ public class MyBatisPlusConfig {
         DynamicTableNameInnerInterceptor tableNameInterceptor = new DynamicTableNameInnerInterceptor();
         tableNameInterceptor.setTableNameHandler((sql, tableName) -> {
             if (tableName.equals(Constants.KLINE_TABLE_NAME_PREFIX)) {
-                return tableName + KlineUtil.getSymbol();
+                return KlineDao.getSymbolTableName();
             }
             return tableName;
         });

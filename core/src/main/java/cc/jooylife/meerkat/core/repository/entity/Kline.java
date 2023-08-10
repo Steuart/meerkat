@@ -36,7 +36,7 @@ public class Kline extends BaseEntity implements Serializable {
     private BigDecimal quJoteAssetVolume;
 
 
-    private Integer numberOfTrades;
+    private Long numberOfTrades;
 
 
     private BigDecimal takerBuyBaseAssetVolume;
@@ -45,5 +45,5 @@ public class Kline extends BaseEntity implements Serializable {
     private BigDecimal takerBuyQuoteAssetVolume;
 
 
-    private String interval;
+    private String type;
 }

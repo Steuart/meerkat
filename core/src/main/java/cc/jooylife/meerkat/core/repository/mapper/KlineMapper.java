@@ -14,4 +14,6 @@ public interface KlineMapper extends BaseMapper<Kline> {
 
     void createTable(String tableName);
 
+
+    void dropTable(String tableName);
 }
