@@ -8,10 +8,12 @@ import cc.jooylife.meerkat.core.test.Application;
 import cc.jooylife.meerkat.core.util.JsonUtil;
 import cn.hutool.core.date.DateUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @SpringBootTest(classes = Application.class)
@@ -28,7 +30,20 @@ public class BinanceExchangeTest {
         param.setInterval(KlineTypeEnum.FIVE_MINUTE.code);
         param.setStartTime(DateUtil.parseDateTime("2023-01-01 00:00:01"));
         param.setEndTime(DateUtil.parseDateTime("2023-01-01 00:05:00"));
-        List<KlineDto> kline = binanceExchange.getKline(param);
-        log.info("kline: {}", JsonUtil.toJson(kline));
+        List<KlineDto> klines = binanceExchange.getKline(param);
+        Assertions.assertEquals(1, klines.size());
+        KlineDto klineDto = klines.get(0);
+        Assertions.assertEquals(DateUtil.parseDateTime("2023-01-01 00:05:00"), klineDto.getOpenTime());
+        Assertions.assertEquals(DateUtil.parseDateTime("2023-01-01 00:09:59"), klineDto.getCloseTime());
+        Assertions.assertEquals(new BigDecimal("16591.91000000"), klineDto.getOpen());
+        Assertions.assertEquals(new BigDecimal("16595.98000000"), klineDto.getHigh());
+        Assertions.assertEquals(new BigDecimal("16591.09000000"), klineDto.getLow());
+        Assertions.assertEquals(new BigDecimal("16592.91000000"), klineDto.getClose());
+        Assertions.assertEquals(new BigDecimal("230.75273000"), klineDto.getVolume());
+        Assertions.assertEquals(new BigDecimal("3828828.02069570"), klineDto.getQuJoteAssetVolume());
+        Assertions.assertEquals(8566L, klineDto.getNumberOfTrades());
+        Assertions.assertEquals(new BigDecimal("123.27824000"), klineDto.getTakerBuyBaseAssetVolume());
+        Assertions.assertEquals(new BigDecimal("2045556.03773200"), klineDto.getTakerBuyQuoteAssetVolume());
+        log.info("kline: {}", JsonUtil.toJson(klines));
     }
 }
