@@ -1,6 +1,7 @@
 package cc.jooylife.meerkat.core.test.exchange;
 
 import cc.jooylife.meerkat.core.common.dto.KlineDto;
+import cc.jooylife.meerkat.core.common.dto.SymbolDto;
 import cc.jooylife.meerkat.core.common.enums.KlineTypeEnum;
 import cc.jooylife.meerkat.core.common.param.KlineParam;
 import cc.jooylife.meerkat.core.exchange.BinanceExchange;
@@ -45,5 +46,11 @@ public class BinanceExchangeTest {
         Assertions.assertEquals(new BigDecimal("123.27824000"), klineDto.getTakerBuyBaseAssetVolume());
         Assertions.assertEquals(new BigDecimal("2045556.03773200"), klineDto.getTakerBuyQuoteAssetVolume());
         log.info("kline: {}", JsonUtil.toJson(klines));
+    }
+
+    @Test
+    public void getSymbols() {
+        List<SymbolDto> symbols = binanceExchange.getSymbols();
+        log.info("symbols:{}", JsonUtil.toJson(symbols));
     }
 }

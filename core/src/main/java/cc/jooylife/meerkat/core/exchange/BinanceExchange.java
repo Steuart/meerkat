@@ -6,6 +6,7 @@ import cc.jooylife.meerkat.core.common.param.KlineParam;
 import cc.jooylife.meerkat.core.util.JsonUtil;
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.BinanceApiRestClient;
+import com.binance.api.client.config.BinanceApiConfig;
 import com.binance.api.client.domain.general.ExchangeInfo;
 import com.binance.api.client.domain.general.SymbolInfo;
 import com.binance.api.client.domain.market.Candlestick;
@@ -14,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,7 +33,18 @@ public class BinanceExchange extends BaseExchange {
     @Value("${exchange.binance.api-secret}")
     private String apiSecret;
 
+    @Value("${exchange.binance.base-domain:}")
+    private String baseDomain;
+
+
     private volatile BinanceApiRestClient marketClient;
+
+    @PostConstruct
+    public void init() {
+        if (!ObjectUtils.isEmpty(baseDomain)) {
+            BinanceApiConfig.setBaseDomain(baseDomain);
+        }
+    }
 
     /**
      * 使用单例获取 MarketClient
