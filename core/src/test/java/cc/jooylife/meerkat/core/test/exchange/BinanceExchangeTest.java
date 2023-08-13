@@ -8,14 +8,23 @@ import cc.jooylife.meerkat.core.exchange.BinanceExchange;
 import cc.jooylife.meerkat.core.test.Application;
 import cc.jooylife.meerkat.core.util.JsonUtil;
 import cn.hutool.core.date.DateUtil;
+import com.binance.api.client.BinanceApiCallback;
+import com.binance.api.client.BinanceApiWebSocketClient;
+import com.binance.api.client.config.BinanceApiConfig;
+import com.binance.api.client.domain.event.CandlestickEvent;
+import com.binance.api.client.domain.market.CandlestickInterval;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootTest(classes = Application.class)
 @Slf4j
@@ -52,5 +61,31 @@ public class BinanceExchangeTest {
     public void getSymbols() {
         List<SymbolDto> symbols = binanceExchange.getSymbols();
         log.info("symbols:{}", JsonUtil.toJson(symbols));
+    }
+
+    @Test
+    public void webcosket() throws InterruptedException {
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        BinanceApiWebSocketClient webSocketClient = binanceExchange.getWebSocketClient();
+        BinanceApiConfig.useTestnetStreaming = true;
+        Closeable closeable = webSocketClient.onCandlestickEvent("ethbtc", CandlestickInterval.ONE_MINUTE, new BinanceApiCallback<CandlestickEvent>() {
+            @Override
+            public void onResponse(CandlestickEvent response) {
+                log.info("response:{}", JsonUtil.toJson(response));
+            }
+
+            @Override
+            public void onFailure(Throwable cause) {
+                log.error("error", cause);
+            }
+        });
+        try {
+            Thread.sleep(TimeUnit.MINUTES.toMillis(2L));
+            closeable.close();
+            countDownLatch.countDown();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        countDownLatch.await();
     }
 }

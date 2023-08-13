@@ -6,6 +6,7 @@ import cc.jooylife.meerkat.core.common.param.KlineParam;
 import cc.jooylife.meerkat.core.util.JsonUtil;
 import com.binance.api.client.BinanceApiClientFactory;
 import com.binance.api.client.BinanceApiRestClient;
+import com.binance.api.client.BinanceApiWebSocketClient;
 import com.binance.api.client.config.BinanceApiConfig;
 import com.binance.api.client.domain.general.ExchangeInfo;
 import com.binance.api.client.domain.general.SymbolInfo;
@@ -39,6 +40,8 @@ public class BinanceExchange extends BaseExchange {
 
     private volatile BinanceApiRestClient marketClient;
 
+    private volatile BinanceApiWebSocketClient webSocketClient;
+
     @PostConstruct
     public void init() {
         if (!ObjectUtils.isEmpty(baseDomain)) {
@@ -59,6 +62,18 @@ public class BinanceExchange extends BaseExchange {
             }
         }
         return marketClient;
+    }
+
+    public BinanceApiWebSocketClient getWebSocketClient() {
+        if (webSocketClient == null) {
+            synchronized (BinanceExchange.class) {
+                if (webSocketClient == null) {
+                    BinanceApiClientFactory factory = BinanceApiClientFactory.newInstance(apiKey, apiSecret);
+                    webSocketClient = factory.newWebSocketClient();
+                }
+            }
+        }
+        return webSocketClient;
     }
 
     @Override

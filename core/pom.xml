@@ -41,9 +41,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.roboquant</groupId>
+            <groupId>com.binance.api</groupId>
             <artifactId>binance-api-client</artifactId>
-            <version>1.0.5</version>
+            <version>1.0.2</version>
         </dependency>
 
         <dependency>
