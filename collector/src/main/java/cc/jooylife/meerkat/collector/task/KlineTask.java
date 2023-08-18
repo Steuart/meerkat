@@ -25,8 +25,9 @@ public class KlineTask {
 
     @Scheduled(cron = "0 0/5 * * * ?")
     public void syncKline() {
+        log.info("begin syncKline......");
         if (klineSyncRunning) {
-            log.error("Kline sync is running, skip this time");
+            log.info("Kline sync is running, skip this time");
         }
         try {
             klineSyncRunning = true;
@@ -36,6 +37,7 @@ public class KlineTask {
         } finally {
             klineSyncRunning = false;
         }
+        log.info("end syncKline......");
     }
 
     @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)

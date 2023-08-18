@@ -113,7 +113,13 @@ public class KlineService {
             Kline lastKline = klines.get(klines.size() - 1);
             Kline firstKline = klines.get(0);
             klineDao.deleteByOpenTime(symbol, firstKline.getOpenTime(), lastKline.getOpenTime(), KlineTypeEnum.FIVE_MINUTE.code);
-            klineDao.saveBatch(klines);
+            try {
+                klineDao.saveBatch(klines);
+            } catch (Exception e) {
+                log.error("sync kline exception, symbol:{}, startTime:{}, endTime:{}, data:{}",
+                        symbol, firstKline.getOpenTime(), lastKline.getOpenTime(), JsonUtil.toJson(klines));
+                break;
+            }
             log.info("sync kline, symbol:{}, startTime:{}, endTime:{}, size:{}",
                     symbol, firstKline.getOpenTime(), lastKline.getOpenTime(), klines.size());
             param.setStartTime(DateUtil.offsetSecond(lastKline.getOpenTime(),1));
