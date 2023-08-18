@@ -16,6 +16,8 @@ public class KlineTask {
 
     private final KlineService klineService;
 
+    private volatile boolean klineSyncRunning = false;
+
     @Autowired
     public KlineTask(KlineService klineService) {
         this.klineService = klineService;
@@ -23,10 +25,16 @@ public class KlineTask {
 
     @Scheduled(cron = "0 0/5 * * * ?")
     public void syncKline() {
+        if (klineSyncRunning) {
+            log.error("Kline sync is running, skip this time");
+        }
         try {
-            klineService.syncKlines(new Date());
+            klineSyncRunning = true;
+            klineService.syncKlineData(new Date());
         } catch (Exception e) {
             log.error("syncKline error", e);
+        } finally {
+            klineSyncRunning = false;
         }
     }
 

@@ -50,7 +50,7 @@ public class SymbolService {
             symbol.setUpdateDate(new Date());
             newSymbols.add(symbol);
         }
-        log.info("sync symbols, size: {}", newSymbols.size());
         symbolDao.saveOrUpdateBatch(newSymbols);
+        log.info("sync symbols, size: {}", newSymbols.size());
     }
 }

@@ -64,12 +64,22 @@ public class KlineService {
     /**
      * 同步K线
      */
-    public void syncKlines(Date endDate) {
+    public void syncKlineData(Date endDate) {
         List<Symbol> symbols = symbolDao.listByStatus(SymbolStatusEnum.TRADING.code);
+        CountDownLatch countDownLatch = new CountDownLatch(symbols.size());
         for (Symbol symbol: symbols) {
             threadPoolExecutor.execute(()->{
-                syncKline(symbol.getName(), endDate);
+                try {
+                    syncKline(symbol.getName(), endDate);
+                } finally {
+                    countDownLatch.countDown();
+                }
             });
+        }
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            log.error("syncKlines error", e);
         }
     }
 
