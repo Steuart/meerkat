@@ -2,7 +2,7 @@ package cc.jooylife.meerkat.core.service;
 
 import cc.jooylife.meerkat.core.common.dto.KlineDto;
 import cc.jooylife.meerkat.core.common.enums.KlineTypeEnum;
-import cc.jooylife.meerkat.core.common.enums.SymbolStatusEnum;
+import cc.jooylife.meerkat.core.common.enums.ExchangeStatusEnum;
 import cc.jooylife.meerkat.core.common.param.KlineParam;
 import cc.jooylife.meerkat.core.exchange.BinanceExchange;
 import cc.jooylife.meerkat.core.repository.dao.KlineDao;
@@ -65,7 +65,7 @@ public class KlineService {
      * 同步K线
      */
     public void syncKlineData(Date endDate) {
-        List<Symbol> symbols = symbolDao.listByStatus(SymbolStatusEnum.TRADING.code);
+        List<Symbol> symbols = symbolDao.listByStatus(ExchangeStatusEnum.TRADING.code);
         CountDownLatch countDownLatch = new CountDownLatch(symbols.size());
         for (Symbol symbol: symbols) {
             threadPoolExecutor.execute(()->{
@@ -131,7 +131,7 @@ public class KlineService {
      * 检查websocket状态
      */
     public void reconnectWebsocket(KlineTypeEnum klineType) {
-        List<Symbol> symbols = symbolDao.listByStatus(SymbolStatusEnum.TRADING.code);
+        List<Symbol> symbols = symbolDao.listByStatus(ExchangeStatusEnum.TRADING.code);
         List<String> symbolNames = symbols.stream().map(Symbol::getName).collect(Collectors.toList());
         for (Map.Entry<String, BinanceApiWebSocket> entry: WEB_SOCKET_CACHE.entrySet()) {
             String channel = entry.getKey();
@@ -155,7 +155,7 @@ public class KlineService {
     public void initListener(KlineTypeEnum klineType) {
         WEB_SOCKET_CACHE.forEach((k,v) -> closeWebSocket(v));
         WEB_SOCKET_CACHE.clear();
-        List<Symbol> symbols = symbolDao.listByStatus(SymbolStatusEnum.TRADING.code);
+        List<Symbol> symbols = symbolDao.listByStatus(ExchangeStatusEnum.TRADING.code);
         if (CollectionUtil.isEmpty(symbols)) {
             log.error("Not found Trading Symbol");
             return;

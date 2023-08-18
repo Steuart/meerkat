@@ -1,12 +1,13 @@
 package cc.jooylife.meerkat.core.common.enums;
 
+/**
+ * @Author: wuhaiming
+ * @Date: 2023/8/18 16:11
+ */
 public enum SymbolStatusEnum {
 
-    /**
-     * 交易对状态
-     */
-    TRADING("TRADING", "交易中"),
-    BREAK("BREAK", "暂停"),
+    ENABLE("enable", "启动"),
+    DISABLE("disable", "禁用"),
     ;
 
     public final String code;

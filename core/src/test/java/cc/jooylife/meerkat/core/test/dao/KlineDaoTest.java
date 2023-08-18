@@ -1,6 +1,6 @@
 package cc.jooylife.meerkat.core.test.dao;
 
-import cc.jooylife.meerkat.core.common.enums.SymbolStatusEnum;
+import cc.jooylife.meerkat.core.common.enums.ExchangeStatusEnum;
 import cc.jooylife.meerkat.core.repository.dao.KlineDao;
 import cc.jooylife.meerkat.core.repository.dao.SymbolDao;
 import cc.jooylife.meerkat.core.repository.entity.Symbol;
@@ -27,7 +27,7 @@ public class KlineDaoTest {
 
     @Test
     public void dropTables() {
-        List<Symbol> symbols = symbolDao.listByStatus(SymbolStatusEnum.TRADING.code);
+        List<Symbol> symbols = symbolDao.listByStatus(ExchangeStatusEnum.TRADING.code);
         for (Symbol symbol: symbols) {
             klineDao.dropTable(symbol.getName());
         }

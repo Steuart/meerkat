@@ -68,8 +68,14 @@ public class Symbol extends BaseEntity implements Serializable {
     private Boolean marginTradingAllowed;
 
     /**
-     * 状态，TRADING-交易中
+     * 交易状态，TRADING-交易中
+     * @see cc.jooylife.meerkat.core.common.enums.ExchangeStatusEnum
+     */
+    private String exchangeStatus;
+
+    /**
+     * 状态
+     * @see cc.jooylife.meerkat.core.common.enums.SymbolStatusEnum
      */
     private String status;
-
 }
