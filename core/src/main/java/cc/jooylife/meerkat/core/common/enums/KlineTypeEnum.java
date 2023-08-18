@@ -1,5 +1,7 @@
 package cc.jooylife.meerkat.core.common.enums;
 
+import com.binance.api.client.domain.market.CandlestickInterval;
+
 public enum KlineTypeEnum {
 
         /**
@@ -29,5 +31,14 @@ public enum KlineTypeEnum {
         KlineTypeEnum(String code, String desc) {
             this.code = code;
             this.desc = desc;
+        }
+
+        public static CandlestickInterval getByCode(KlineTypeEnum type) {
+            for (CandlestickInterval CandlestickInterval : CandlestickInterval.values()) {
+                if (CandlestickInterval.getIntervalId().equals(type.code)) {
+                    return CandlestickInterval;
+                }
+            }
+            return CandlestickInterval.FIVE_MINUTES;
         }
 }

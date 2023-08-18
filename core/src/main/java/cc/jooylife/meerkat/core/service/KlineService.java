@@ -9,22 +9,30 @@ import cc.jooylife.meerkat.core.repository.dao.KlineDao;
 import cc.jooylife.meerkat.core.repository.dao.SymbolDao;
 import cc.jooylife.meerkat.core.repository.entity.Kline;
 import cc.jooylife.meerkat.core.repository.entity.Symbol;
+import cc.jooylife.meerkat.core.util.JsonUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
+import com.binance.api.client.BinanceApiWebSocket;
+import com.binance.api.client.BinanceApiWebSocketClient;
+import com.binance.api.client.domain.market.CandlestickInterval;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class KlineService {
+
+
+    private final ConcurrentHashMap<String, BinanceApiWebSocket> WEB_SOCKET_CACHE = new ConcurrentHashMap<>();
 
     private final SymbolDao symbolDao;
 
@@ -50,16 +58,17 @@ public class KlineService {
         RejectedExecutionHandler handler = new ThreadPoolExecutor.CallerRunsPolicy();
         threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 60, TimeUnit.SECONDS, queue, handler);
         threadPoolExecutor.allowCoreThreadTimeOut(true);
+        // initListener(KlineTypeEnum.FIVE_MINUTE);
     }
 
     /**
      * 同步K线
      */
-    public void syncKlines() {
+    public void syncKlines(Date endDate) {
         List<Symbol> symbols = symbolDao.listByStatus(SymbolStatusEnum.TRADING.code);
         for (Symbol symbol: symbols) {
             threadPoolExecutor.execute(()->{
-                syncKline(symbol.getName());
+                syncKline(symbol.getName(), endDate);
             });
         }
     }
@@ -67,20 +76,18 @@ public class KlineService {
     /**
      * 同步K线
      */
-    public void syncKline(String symbol) {
+    public void syncKline(String symbol, Date endDate) {
         klineDao.createTable(symbol);
         Kline latestKline = klineDao.getLatestKline(symbol);
         Date startTime = latestKline == null ? null : latestKline.getOpenTime();
         if (startTime == null) {
             startTime = DateUtil.parseDateTime("2021-01-01 00:00:00");
-        } else {
-            startTime = DateUtil.offsetSecond(startTime, 1);
         }
         KlineParam param = new KlineParam();
         param.setSymbol(symbol);
         param.setInterval(KlineTypeEnum.FIVE_MINUTE.code);
         param.setStartTime(startTime);
-        param.setEndTime(new Date());
+        param.setEndTime(endDate);
         while (true) {
             List<KlineDto> klineDtos = binanceExchange.getKline(param);
             if (CollectionUtil.isEmpty(klineDtos)) {
@@ -101,6 +108,78 @@ public class KlineService {
                     symbol, firstKline.getOpenTime(), lastKline.getOpenTime(), klines.size());
             param.setStartTime(DateUtil.offsetSecond(lastKline.getOpenTime(),1));
             param.setEndTime(new Date());
+        }
+    }
+
+    /**
+     * 检查websocket状态
+     */
+    public void reconnectWebsocket(KlineTypeEnum klineType) {
+        List<Symbol> symbols = symbolDao.listByStatus(SymbolStatusEnum.TRADING.code);
+        List<String> symbolNames = symbols.stream().map(Symbol::getName).collect(Collectors.toList());
+        for (Map.Entry<String, BinanceApiWebSocket> entry: WEB_SOCKET_CACHE.entrySet()) {
+            String channel = entry.getKey();
+            List<String> channelList = Lists.newArrayList(channel.split(","));
+            if(Collections.disjoint(channelList, symbolNames)) {;
+                closeWebSocket(entry.getValue());
+                WEB_SOCKET_CACHE.remove(channel);
+            }
+            BinanceApiWebSocket webSocket = entry.getValue();
+            if (!webSocket.getListener().isClosing()) {
+                continue;
+            }
+            BinanceApiWebSocket klineWebSocket = createKlineWebSocket(channel, klineType);
+            WEB_SOCKET_CACHE.put(channel, klineWebSocket);
+        }
+    }
+
+    /**
+     * 初始化监听器
+     */
+    public void initListener(KlineTypeEnum klineType) {
+        WEB_SOCKET_CACHE.forEach((k,v) -> closeWebSocket(v));
+        WEB_SOCKET_CACHE.clear();
+        List<Symbol> symbols = symbolDao.listByStatus(SymbolStatusEnum.TRADING.code);
+        if (CollectionUtil.isEmpty(symbols)) {
+            log.error("Not found Trading Symbol");
+            return;
+        }
+        List<List<Symbol>> symbolLists = Lists.partition(symbols, 50);
+        List<String> channels = Lists.newArrayList();
+        for (List<Symbol> symbolList : symbolLists) {
+            String channel = symbolList
+                    .stream()
+                    .map(Symbol::getName)
+                    .map(String::toLowerCase)
+                    .sorted()
+                    .collect(Collectors.joining(","));
+            channels.add(channel);
+        }
+        for (String channel : channels) {
+            BinanceApiWebSocket webSocket = createKlineWebSocket(channel, klineType);
+            WEB_SOCKET_CACHE.put(channel, webSocket);
+        }
+    }
+
+    /**
+     * 创建websocket
+     */
+    private BinanceApiWebSocket createKlineWebSocket(String channel, KlineTypeEnum typeEnum) {
+        BinanceApiWebSocketClient webSocketClient = binanceExchange.getWebSocketClient();
+        CandlestickInterval interval = KlineTypeEnum.getByCode(typeEnum);
+        return webSocketClient.onCandlestickEvent(channel, interval, response -> {
+            log.info("response:{}", JsonUtil.toJson(response));
+        });
+    }
+
+    /**
+     * 关闭websocket
+     */
+    private void closeWebSocket(BinanceApiWebSocket webSocket) {
+        try {
+            webSocket.close();
+        } catch (IOException e) {
+            log.error("Close web socket error", e);
         }
     }
 }

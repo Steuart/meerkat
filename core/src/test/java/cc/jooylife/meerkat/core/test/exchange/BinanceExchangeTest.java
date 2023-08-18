@@ -64,6 +64,19 @@ public class BinanceExchangeTest {
     }
 
     @Test
+    public void getKline() {
+        KlineParam param = new KlineParam();
+        param.setSymbol("BTCUSDT");
+        param.setInterval(KlineTypeEnum.FIVE_MINUTE.code);
+        param.setStartTime(DateUtil.parseDateTime("2023-08-18 14:30:00"));
+        param.setEndTime(DateUtil.parseDateTime("2023-08-18 14:40:00"));
+        List<KlineDto> klines = binanceExchange.getKline(param);
+        for (KlineDto klineDto: klines) {
+            log.info("kline:{}", JsonUtil.toJson(klineDto));
+        }
+    }
+
+    @Test
     public void webcosket() throws InterruptedException {
         CountDownLatch countDownLatch = new CountDownLatch(1);
         BinanceApiWebSocketClient webSocketClient = binanceExchange.getWebSocketClient();
