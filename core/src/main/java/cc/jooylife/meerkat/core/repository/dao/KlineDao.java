@@ -54,8 +54,8 @@ public class KlineDao extends ServiceImpl<KlineMapper, Kline> {
     public void deleteByOpenTime(String symbol, Date startTime, Date endTime, String type) {
         setSymbolTableName(symbol.toLowerCase());
         LambdaQueryWrapper<Kline> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.le(Kline::getOpenTime, startTime);
-        queryWrapper.ge(Kline::getOpenTime, endTime);
+        queryWrapper.ge(Kline::getOpenTime, startTime);
+        queryWrapper.le(Kline::getOpenTime, endTime);
         queryWrapper.eq(Kline::getType, type);
         remove(queryWrapper);
     }
